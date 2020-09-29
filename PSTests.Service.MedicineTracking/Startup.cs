@@ -17,6 +17,7 @@ namespace PSTests.Service.MedicineTracking
 {
     public class Startup
     {
+        readonly string CorsPolicy = "_corsPolicy";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -32,6 +33,13 @@ namespace PSTests.Service.MedicineTracking
             services.AddDbContext<MedicineDbContext>(opt => opt.UseInMemoryDatabase("MedicineTracking"));
 
             services.AddControllers();
+
+            services.AddCors(o => o.AddPolicy(CorsPolicy, builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
 
             services.AddMvcCore().AddApiExplorer();
             services.AddSwaggerGen();
@@ -51,6 +59,8 @@ namespace PSTests.Service.MedicineTracking
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Medicine Tracking");
             });
+
+            app.UseCors(CorsPolicy);
 
             app.UseHttpsRedirection();
 
